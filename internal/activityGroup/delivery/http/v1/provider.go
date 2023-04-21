@@ -5,24 +5,26 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/wire"
+	"github.com/kholiqcode/go-todolist/internal/activityGroup/service"
 )
 
 var (
 	hdl     *activityGroupHandlerImpl
 	hdlOnce sync.Once
 
-	ActivityGroupSet wire.ProviderSet = wire.NewSet(
-		ProvideHttpServer,
+	ActivityGroupHandlerSet wire.ProviderSet = wire.NewSet(
+		ProvideActivityGroupHandler,
 
 		wire.Bind(new(ActivityGroupHandler), new(*activityGroupHandlerImpl)),
 	)
 )
 
-func ProvideHttpServer(route *chi.Mux) (*activityGroupHandlerImpl, error) {
+func ProvideActivityGroupHandler(route *chi.Mux, activityGroupSvc service.ActivityGroupService) (*activityGroupHandlerImpl, error) {
 	hdlOnce.Do(func() {
 
 		hdl = &activityGroupHandlerImpl{
-			route: route,
+			route:            route,
+			activityGroupSvc: activityGroupSvc,
 		}
 	})
 
