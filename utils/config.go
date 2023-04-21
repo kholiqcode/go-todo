@@ -38,3 +38,12 @@ func LoadBaseConfig(path string, configName string) (config *BaseConfig) {
 
 	return
 }
+
+func CheckAndSetConfig(path string, configName string) *BaseConfig {
+	config := LoadBaseConfig(path, configName)
+	if config.Environment == TEST {
+		config = LoadBaseConfig(path, "test")
+	}
+
+	return config
+}
