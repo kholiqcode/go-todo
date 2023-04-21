@@ -8,7 +8,7 @@ import (
 )
 
 func ConnectDB(cfg *BaseConfig) *sql.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?multiStatements=true&charset=utf8&parseTime=True&loc=Local", cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName)
 	dbDriver := "mysql"
 	dbc, err := sql.Open(dbDriver, dsn)
 	LogAndPanicIfError(err, "failed when connecting to database")
