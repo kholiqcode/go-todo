@@ -1,0 +1,14 @@
+version: "1"
+packages:
+  - name: "querier"
+    path: "./internal/activityGroup/repository"
+    queries:
+      - "./internal/activityGroup/queries/activity_groups.sql"
+    schema:
+      - "./database/migrations/"
+    engine: "mysql"
+    emit_json_tags: true
+    emit_prepared_queries: false
+    emit_interface: true
+    emit_exact_table_names: false
+    emit_empty_slices: true
