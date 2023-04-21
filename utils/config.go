@@ -7,8 +7,11 @@ import (
 )
 
 type BaseConfig struct {
-	DBDriver             string        `mapstructure:"DB_DRIVER"`
-	DBSource             string        `mapstructure:"DB_SOURCE"`
+	DBHost               string        `mapstructure:"MYSQL_HOST"`
+	DBPort               string        `mapstructure:"MYSQL_PORT"`
+	DBUser               string        `mapstructure:"MYSQL_USER"`
+	DBPassword           string        `mapstructure:"MYSQL_PASSWORD"`
+	DBName               string        `mapstructure:"MYSQL_DBNAME"`
 	ServerPort           string        `mapstructure:"SERVER_PORT"`
 	TokenSymmetricKey    string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`

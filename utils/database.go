@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/lib/pq"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func ConnectDB(dbDriver, dbSource string) *sql.DB {
-	dsn := fmt.Sprintf("%s://%s", dbDriver, dbSource)
-
+func ConnectDB(cfg *BaseConfig) *sql.DB {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName)
+	dbDriver := "mysql"
 	dbc, err := sql.Open(dbDriver, dsn)
 	LogAndPanicIfError(err, "failed when connecting to database")
 

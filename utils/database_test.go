@@ -9,7 +9,7 @@ import (
 func TestConnectDB(t *testing.T) {
 	config := LoadBaseConfig("../", "test")
 	assert.NotPanics(t, func() {
-		db := ConnectDB(config.DBDriver, config.DBSource)
+		db := ConnectDB(config)
 		assert.NotNil(t, db)
 	})
 }
