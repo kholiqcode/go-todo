@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS activity_group (
+CREATE TABLE IF NOT EXISTS activity_groups (
   id INT NOT NULL AUTO_INCREMENT,
   title VARCHAR(255) NOT NULL,
   email VARCHAR(100) NOT NULL UNIQUE,
@@ -7,9 +7,9 @@ CREATE TABLE IF NOT EXISTS activity_group (
   PRIMARY KEY (id)
 );
 
-ALTER TABLE activity_group ADD INDEX idx_email (email);
+ALTER TABLE activity_groups ADD INDEX idx_email (email);
 
-CREATE TABLE IF NOT EXISTS todo (
+CREATE TABLE IF NOT EXISTS todos (
   id INT NOT NULL AUTO_INCREMENT,
   activity_group_id INT NOT NULL,
   title VARCHAR(255) NOT NULL,
@@ -20,5 +20,5 @@ CREATE TABLE IF NOT EXISTS todo (
   PRIMARY KEY (id)
 );
 
-ALTER TABLE todo ADD CONSTRAINT fk_activity_group_id FOREIGN KEY (activity_group_id) REFERENCES activity_group (id);
+ALTER TABLE todos ADD CONSTRAINT fk_activity_group_id FOREIGN KEY (activity_group_id) REFERENCES activity_groups (id);
 
