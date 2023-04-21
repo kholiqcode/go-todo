@@ -10,6 +10,8 @@ import (
 	"database/sql"
 	"github.com/go-chi/chi/v5"
 	"github.com/kholiqcode/go-todolist/internal/activityGroup/delivery/http/v1"
+	"github.com/kholiqcode/go-todolist/internal/activityGroup/repository"
+	"github.com/kholiqcode/go-todolist/internal/activityGroup/service"
 	"github.com/kholiqcode/go-todolist/internal/app"
 	"github.com/kholiqcode/go-todolist/utils"
 )
@@ -17,7 +19,15 @@ import (
 // Injectors from injector.go:
 
 func InitializeApp(route *chi.Mux, DB *sql.DB, config *utils.BaseConfig) (app.HttpServer, error) {
-	activityGroupHandlerImpl, err := v1.ProvideHttpServer(route)
+	activityGroupRepoImpl, err := querier.ProvideActivityGroupRepo(DB)
+	if err != nil {
+		return nil, err
+	}
+	activityGroupServiceImpl, err := service.ProvideActivityGroupService(activityGroupRepoImpl)
+	if err != nil {
+		return nil, err
+	}
+	activityGroupHandlerImpl, err := v1.ProvideActivityGroupHandler(route, activityGroupServiceImpl)
 	if err != nil {
 		return nil, err
 	}
