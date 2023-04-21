@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS activity_group (
+  id INT NOT NULL AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);
+
+ALTER TABLE activity_group ADD INDEX idx_email (email);
+
+CREATE TABLE IF NOT EXISTS todo (
+  id INT NOT NULL AUTO_INCREMENT,
+  activity_group_id INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT FALSE,
+  priority ENUM ('very-high', 'medium', 'high', 'low', 'very-low') NOT NULL DEFAULT 'low',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);
+
+ALTER TABLE todo ADD CONSTRAINT fk_activity_group_id FOREIGN KEY (activity_group_id) REFERENCES activity_group (id);
+

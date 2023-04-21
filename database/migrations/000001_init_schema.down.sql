@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS activity_group;
+DROP TABLE IF EXISTS todo;
