@@ -50,11 +50,47 @@ func (q *Queries) GetTodo(ctx context.Context, id int32) (Todo, error) {
 }
 
 const listTodos = `-- name: ListTodos :many
-SELECT id, activity_group_id, title, is_active, priority, created_at, updated_at FROM todos ORDER BY id DESC
+SELECT id, activity_group_id, title, is_active, priority, created_at, updated_at FROM todos WHERE 
+CASE 
+WHEN ? = 'activity_group_id' THEN activity_group_id 
+ELSE title END =
+CASE
+WHEN ? = '' THEN ''
+ELSE ? END
+ORDER BY 
+CASE WHEN ? = 'title' THEN title END ASC,
+CASE WHEN ? = '-title' THEN title END DESC,
+CASE WHEN ? = 'is_active' THEN is_active END ASC,
+CASE WHEN ? = '-is_active' THEN is_active END DESC,
+CASE WHEN ? = 'createdAt' THEN created_at END ASC,
+CASE WHEN ? = '-createdAt' THEN created_at END DESC, 
+CASE WHEN ? = '' THEN activity_group_id END ASC
+LIMIT ? OFFSET ?
 `
 
-func (q *Queries) ListTodos(ctx context.Context) ([]Todo, error) {
-	rows, err := q.db.QueryContext(ctx, listTodos)
+type ListTodosParams struct {
+	SearchField interface{} `json:"search_field"`
+	SearchValue int32       `json:"search_value"`
+	SortBy      interface{} `json:"sort_by"`
+	Limit       int32       `json:"limit"`
+	Offset      int32       `json:"offset"`
+}
+
+func (q *Queries) ListTodos(ctx context.Context, arg ListTodosParams) ([]Todo, error) {
+	rows, err := q.db.QueryContext(ctx, listTodos,
+		arg.SearchField,
+		arg.SearchField,
+		arg.SearchValue,
+		arg.SortBy,
+		arg.SortBy,
+		arg.SortBy,
+		arg.SortBy,
+		arg.SortBy,
+		arg.SortBy,
+		arg.SortBy,
+		arg.Limit,
+		arg.Offset,
+	)
 	if err != nil {
 		return nil, err
 	}
