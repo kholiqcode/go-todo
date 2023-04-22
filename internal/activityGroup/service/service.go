@@ -11,6 +11,7 @@ import (
 
 type ActivityGroupService interface {
 	FindAll(ctx context.Context) ([]dtos.ActivityGroupResponse, error)
+	FindByID(ctx context.Context, id int32) (*dtos.ActivityGroupResponse, error)
 }
 
 type activityGroupServiceImpl struct {
@@ -38,4 +39,16 @@ func (s *activityGroupServiceImpl) FindAll(ctx context.Context) ([]dtos.Activity
 	}
 
 	return activityGroupsResp, nil
+}
+
+func (s *activityGroupServiceImpl) FindByID(ctx context.Context, id int32) (*dtos.ActivityGroupResponse, error) {
+	activityGroup, err := s.repo.GetActivityGroup(ctx, id)
+
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("failed to get activity group: %v", err))
+	}
+
+	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
+
+	return &activityGroupResp, nil
 }
