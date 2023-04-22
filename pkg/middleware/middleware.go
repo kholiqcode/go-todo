@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -19,4 +20,8 @@ func SetupMiddleware(route *chi.Mux, config *utils.BaseConfig) {
 
 		route.Use(Recovery)
 	}
+
+	route.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		utils.GenerateJsonResponse(w, nil, http.StatusNotFound, "Not Found")
+	})
 }
