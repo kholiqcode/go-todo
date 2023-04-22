@@ -14,6 +14,7 @@ type ActivityGroupHandler interface {
 	getActivityGroup(w http.ResponseWriter, r *http.Request)
 	createActivityGroup(w http.ResponseWriter, r *http.Request)
 	updateActivityGroup(w http.ResponseWriter, r *http.Request)
+	deleteActivityGroup(w http.ResponseWriter, r *http.Request)
 	MapRoutes()
 }
 
@@ -72,4 +73,16 @@ func (h *activityGroupHandlerImpl) updateActivityGroup(w http.ResponseWriter, r 
 	utils.PanicIfError(err)
 
 	utils.GenerateJsonResponse(w, activityGroupResp, 200, "Success")
+}
+
+func (h *activityGroupHandlerImpl) deleteActivityGroup(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	id := utils.ValidateUrlParamInt(r, "id")
+
+	err := h.activityGroupSvc.Delete(ctx, int32(id))
+	utils.PanicIfError(err)
+
+	utils.GenerateJsonResponse(w, nil, 204, "Success")
 }

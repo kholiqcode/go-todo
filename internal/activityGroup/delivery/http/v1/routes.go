@@ -9,6 +9,7 @@ func (h *activityGroupHandlerImpl) MapRoutes() {
 		r.Get("/{id}", h.getActivityGroup)
 		r.Post("/", h.createActivityGroup)
 		r.Patch("/{id}", h.updateActivityGroup)
+		r.Delete("/{id}", h.deleteActivityGroup)
 	})
 
 }
