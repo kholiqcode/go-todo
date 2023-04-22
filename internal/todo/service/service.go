@@ -13,7 +13,7 @@ type TodoService interface {
 	FindByID(ctx context.Context, id int32) (*dtos.TodoResponse, error)
 	Store(ctx context.Context, request dtos.CreateTodoRequest) (*dtos.TodoResponse, error)
 	Update(ctx context.Context, id int32, request dtos.UpdateTodoRequest) (*dtos.TodoResponse, error)
-	// Delete(ctx context.Context, id int32) error
+	Delete(ctx context.Context, id int32) error
 }
 
 type todoServiceImpl struct {
@@ -106,4 +106,14 @@ func (s *todoServiceImpl) Update(ctx context.Context, id int32, request dtos.Upd
 	todoResp := dtos.ToTodoResponse(todo)
 
 	return &todoResp, nil
+}
+
+func (s *todoServiceImpl) Delete(ctx context.Context, id int32) error {
+	err := s.repo.DeleteTodo(ctx, id)
+
+	if err != nil {
+		return utils.CustomErrorWithTrace(err, "failed to delete todo", 400)
+	}
+
+	return nil
 }
