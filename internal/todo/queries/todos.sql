@@ -30,5 +30,5 @@ SET title = ?
 WHERE id = ?;
 
 -- name: CreateTodo :execresult
-INSERT INTO todos (title)
-VALUES (?);
+INSERT INTO todos (activity_group_id, title, is_active, priority)
+VALUES (?, ?, ?, ?);
