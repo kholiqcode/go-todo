@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kholiqcode/go-todolist/internal/todo/dtos"
 	querier "github.com/kholiqcode/go-todolist/internal/todo/repository"
@@ -49,7 +50,7 @@ func (s *todoServiceImpl) FindByID(ctx context.Context, id int32) (*dtos.TodoRes
 	todo, err := s.repo.GetTodo(ctx, id)
 
 	if err != nil {
-		return nil, utils.CustomError("failed to get todo", 400)
+		return nil, utils.CustomErrorWithTrace(err, fmt.Sprintf("Todo with ID %v Not Found", id), 404)
 	}
 
 	todoResp := dtos.ToTodoResponse(todo)
@@ -58,10 +59,11 @@ func (s *todoServiceImpl) FindByID(ctx context.Context, id int32) (*dtos.TodoRes
 }
 
 func (s *todoServiceImpl) Store(ctx context.Context, request dtos.CreateTodoRequest) (*dtos.TodoResponse, error) {
+
 	param := querier.CreateTodoParams{
 		Title:           request.Title,
 		ActivityGroupID: int32(request.ActivityGroupID),
-		IsActive:        request.IsActive,
+		IsActive:        true,
 		Priority:        "very-high",
 	}
 
@@ -95,12 +97,12 @@ func (s *todoServiceImpl) Update(ctx context.Context, id int32, request dtos.Upd
 	err := s.repo.UpdateTodo(ctx, param)
 
 	if err != nil {
-		return nil, utils.CustomErrorWithTrace(err, "failed to update todo", 400)
+		return nil, utils.CustomErrorWithTrace(err, "failed to update todo", 404)
 	}
 
 	todo, err := s.repo.GetTodo(ctx, id)
 	if err != nil {
-		return nil, utils.CustomErrorWithTrace(err, "failed to get todo", 400)
+		return nil, utils.CustomErrorWithTrace(err, fmt.Sprintf("Todo with ID %v Not Found", id), 404)
 	}
 
 	todoResp := dtos.ToTodoResponse(todo)
@@ -109,11 +111,13 @@ func (s *todoServiceImpl) Update(ctx context.Context, id int32, request dtos.Upd
 }
 
 func (s *todoServiceImpl) Delete(ctx context.Context, id int32) error {
-	err := s.repo.DeleteTodo(ctx, id)
+	_, err := s.repo.GetTodo(ctx, id)
 
 	if err != nil {
-		return utils.CustomErrorWithTrace(err, "failed to delete todo", 400)
+		return utils.CustomErrorWithTrace(err, fmt.Sprintf("Todo with ID %v Not Found", id), 404)
 	}
+
+	s.repo.DeleteTodo(ctx, id)
 
 	return nil
 }

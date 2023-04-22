@@ -27,7 +27,7 @@ type ResponseSlice struct {
 
 var HttpMessage = map[int]string{
 	200: "Success",
-	201: "Created",
+	201: "Success",
 	202: "Accepted",
 	204: "No Content",
 	400: "Bad Request",

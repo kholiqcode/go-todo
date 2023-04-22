@@ -84,5 +84,7 @@ func (h *activityGroupHandlerImpl) deleteActivityGroup(w http.ResponseWriter, r 
 	err := h.activityGroupSvc.Delete(ctx, int32(id))
 	utils.PanicIfError(err)
 
-	utils.GenerateJsonResponse(w, nil, 204, "Success")
+	any := struct{}{}
+
+	utils.GenerateJsonResponse(w, any, 200, "Success")
 }

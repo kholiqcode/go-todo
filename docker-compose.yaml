@@ -26,5 +26,11 @@ services:
       MYSQL_PASSWORD: test
       MYSQL_DBNAME: test
 
+  test:
+    image: monsterup/devcode-unit-test-1
+    container_name: test
+    environment:
+      API_URL: app:3030
+
 volumes:
   mysql:

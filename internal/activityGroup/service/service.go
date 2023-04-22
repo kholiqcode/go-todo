@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kholiqcode/go-todolist/internal/activityGroup/dtos"
 	querier "github.com/kholiqcode/go-todolist/internal/activityGroup/repository"
@@ -47,7 +48,7 @@ func (s *activityGroupServiceImpl) FindByID(ctx context.Context, id int32) (*dto
 	activityGroup, err := s.repo.GetActivityGroup(ctx, id)
 
 	if err != nil {
-		return nil, utils.CustomErrorWithTrace(err, "failed to get activity group", 404)
+		return nil, utils.CustomErrorWithTrace(err, fmt.Sprintf("Activity with ID %v Not Found", id), 404)
 	}
 
 	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
@@ -96,7 +97,7 @@ func (s *activityGroupServiceImpl) Update(ctx context.Context, id int32, request
 
 	activityGroup, err := s.repo.GetActivityGroup(ctx, id)
 	if err != nil {
-		return nil, utils.CustomErrorWithTrace(err, "failed to get activity group", 400)
+		return nil, utils.CustomErrorWithTrace(err, fmt.Sprintf("Activity with ID %v Not Found", id), 404)
 	}
 
 	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
@@ -105,11 +106,12 @@ func (s *activityGroupServiceImpl) Update(ctx context.Context, id int32, request
 }
 
 func (s *activityGroupServiceImpl) Delete(ctx context.Context, id int32) error {
-	err := s.repo.DeleteActivityGroup(ctx, id)
-
+	_, err := s.repo.GetActivityGroup(ctx, id)
 	if err != nil {
-		return utils.CustomErrorWithTrace(err, "failed to delete activity group", 400)
+		return utils.CustomErrorWithTrace(err, fmt.Sprintf("Activity with ID %v Not Found", id), 404)
 	}
+
+	s.repo.DeleteActivityGroup(ctx, id)
 
 	return nil
 }

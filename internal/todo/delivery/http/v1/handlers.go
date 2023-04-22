@@ -55,6 +55,10 @@ func (h *todoHandlerImpl) createTodo(w http.ResponseWriter, r *http.Request) {
 
 	utils.ValidateBodyPayload(r.Body, &request)
 
+	if request.ActivityGroupID == 0 {
+		utils.PanicAppError("activity_group_id cannot be null", 400)
+	}
+
 	todoResp, err := h.todoSvc.Store(ctx, request)
 	utils.PanicIfError(err)
 
@@ -84,5 +88,7 @@ func (h *todoHandlerImpl) deleteTodo(w http.ResponseWriter, r *http.Request) {
 	err := h.todoSvc.Delete(ctx, int32(id))
 	utils.PanicIfError(err)
 
-	utils.GenerateJsonResponse(w, nil, 204, "Success")
+	any := struct{}{}
+
+	utils.GenerateJsonResponse(w, any, 200, "Success")
 }

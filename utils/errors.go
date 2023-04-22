@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -87,11 +88,24 @@ func ValidateStruct(data interface{}) {
 	var validationErrors []ValidationError
 	validate := validator.New()
 	errorValidate := validate.Struct(data)
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
 
 	if errorValidate != nil {
 		for _, err := range errorValidate.(validator.ValidationErrors) {
 			var validationError ValidationError
 			validationError.Message = strings.Split(err.Error(), "Error:")[1]
+			if err.Tag() == "required" {
+				validationError.Message = fmt.Sprintf("%s cannot be null", strings.ToLower(err.Field()))
+			}
+			if err.Tag() == "email" {
+				validationError.Message = fmt.Sprintf("%s is not valid email", strings.ToLower(err.Field()))
+			}
 			validationErrors = append(validationErrors, validationError)
 		}
 		PanicValidationError(validationErrors, 400)
