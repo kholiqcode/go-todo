@@ -14,6 +14,7 @@ type TodoHandler interface {
 	getTodo(w http.ResponseWriter, r *http.Request)
 	createTodo(w http.ResponseWriter, r *http.Request)
 	updateTodo(w http.ResponseWriter, r *http.Request)
+	deleteTodo(w http.ResponseWriter, r *http.Request)
 	MapRoutes()
 }
 type todoHandlerImpl struct {
@@ -73,4 +74,15 @@ func (h *todoHandlerImpl) updateTodo(w http.ResponseWriter, r *http.Request) {
 	utils.PanicIfError(err)
 
 	utils.GenerateJsonResponse(w, todoResp, 200, "Success")
+}
+
+func (h *todoHandlerImpl) deleteTodo(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id := utils.ValidateUrlParamInt(r, "id")
+
+	err := h.todoSvc.Delete(ctx, int32(id))
+	utils.PanicIfError(err)
+
+	utils.GenerateJsonResponse(w, nil, 204, "Success")
 }
