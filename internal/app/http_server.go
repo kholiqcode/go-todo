@@ -12,7 +12,8 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	v1 "github.com/kholiqcode/go-todolist/internal/activityGroup/delivery/http/v1"
+	v1_activityGroup "github.com/kholiqcode/go-todolist/internal/activityGroup/delivery/http/v1"
+	v1_todo "github.com/kholiqcode/go-todolist/internal/todo/delivery/http/v1"
 	"github.com/kholiqcode/go-todolist/pkg/logger"
 	"github.com/kholiqcode/go-todolist/pkg/middleware"
 	"github.com/kholiqcode/go-todolist/utils"
@@ -25,14 +26,17 @@ type HttpServer interface {
 type httpServerImpl struct {
 	route           *chi.Mux
 	config          *utils.BaseConfig
-	activityHandler v1.ActivityGroupHandler
+	activityHandler v1_activityGroup.ActivityGroupHandler
+	todoHandler     v1_todo.TodoHandler
 	startAt         time.Time
 }
 
 func (s *httpServerImpl) ListenAndServe() {
 
 	middleware.SetupMiddleware(s.route, s.config)
+
 	s.activityHandler.MapRoutes()
+	s.todoHandler.MapRoutes()
 
 	s.runHealthCheck()
 
