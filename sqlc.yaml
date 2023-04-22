@@ -12,3 +12,15 @@ packages:
     emit_interface: true
     emit_exact_table_names: false
     emit_empty_slices: true
+  - name: "querier"
+    path: "./internal/todo/repository"
+    queries:
+      - "./internal/todo/queries/todos.sql"
+    schema:
+      - "./database/migrations/"
+    engine: "mysql"
+    emit_json_tags: true
+    emit_prepared_queries: false
+    emit_interface: true
+    emit_exact_table_names: false
+    emit_empty_slices: true
