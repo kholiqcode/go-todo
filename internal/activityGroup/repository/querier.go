@@ -6,12 +6,15 @@ package querier
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Querier interface {
+	CreateActivityGroup(ctx context.Context, arg CreateActivityGroupParams) (sql.Result, error)
 	DeleteActivityGroup(ctx context.Context, id int32) error
 	GetActivityGroup(ctx context.Context, id int32) (ActivityGroup, error)
 	ListActivityGroups(ctx context.Context) ([]ActivityGroup, error)
+	UpdateActivityGroup(ctx context.Context, arg UpdateActivityGroupParams) error
 }
 
 var _ Querier = (*Queries)(nil)

@@ -7,7 +7,22 @@ package querier
 
 import (
 	"context"
+	"database/sql"
 )
+
+const createActivityGroup = `-- name: CreateActivityGroup :execresult
+INSERT INTO activity_groups (title, email)
+VALUES (?, ?)
+`
+
+type CreateActivityGroupParams struct {
+	Title string `json:"title"`
+	Email string `json:"email"`
+}
+
+func (q *Queries) CreateActivityGroup(ctx context.Context, arg CreateActivityGroupParams) (sql.Result, error) {
+	return q.db.ExecContext(ctx, createActivityGroup, arg.Title, arg.Email)
+}
 
 const deleteActivityGroup = `-- name: DeleteActivityGroup :exec
 DELETE FROM activity_groups
@@ -38,7 +53,7 @@ func (q *Queries) GetActivityGroup(ctx context.Context, id int32) (ActivityGroup
 }
 
 const listActivityGroups = `-- name: ListActivityGroups :many
-SELECT id, title, email, created_at, updated_at FROM activity_groups
+SELECT id, title, email, created_at, updated_at FROM activity_groups ORDER BY id DESC
 `
 
 func (q *Queries) ListActivityGroups(ctx context.Context) ([]ActivityGroup, error) {
@@ -68,4 +83,20 @@ func (q *Queries) ListActivityGroups(ctx context.Context) ([]ActivityGroup, erro
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateActivityGroup = `-- name: UpdateActivityGroup :exec
+UPDATE activity_groups
+SET title = ?
+WHERE id = ?
+`
+
+type UpdateActivityGroupParams struct {
+	Title string `json:"title"`
+	ID    int32  `json:"id"`
+}
+
+func (q *Queries) UpdateActivityGroup(ctx context.Context, arg UpdateActivityGroupParams) error {
+	_, err := q.db.ExecContext(ctx, updateActivityGroup, arg.Title, arg.ID)
+	return err
 }
