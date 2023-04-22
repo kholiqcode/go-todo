@@ -11,7 +11,7 @@ import (
 
 type TodoHandler interface {
 	getTodos(w http.ResponseWriter, r *http.Request)
-	// getTodo(w http.ResponseWriter, r *http.Request)
+	getTodo(w http.ResponseWriter, r *http.Request)
 	// createTodo(w http.ResponseWriter, r *http.Request)
 	// updateTodo(w http.ResponseWriter, r *http.Request)
 	MapRoutes()
@@ -34,4 +34,15 @@ func (h *todoHandlerImpl) getTodos(w http.ResponseWriter, r *http.Request) {
 	utils.PanicIfError(err)
 
 	utils.GenerateJsonResponse(w, activityGroupsResp, 200, "Success")
+}
+
+func (h *todoHandlerImpl) getTodo(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id := utils.ValidateUrlParamInt(r, "id")
+
+	todoResp, err := h.todoSvc.FindByID(ctx, int32(id))
+	utils.PanicIfError(err)
+
+	utils.GenerateJsonResponse(w, todoResp, 200, "Success")
 }
