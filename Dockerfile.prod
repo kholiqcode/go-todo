@@ -1,0 +1,33 @@
+# Build stage
+FROM golang:1.20-alpine3.17 AS builder
+
+ARG MYSQL_HOST
+ARG MYSQL_PORT
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG MYSQL_DBNAME
+
+ENV MYSQL_HOST=$MYSQL_HOST
+ENV MYSQL_PORT=$MYSQL_PORT
+ENV MYSQL_USER=$MYSQL_USER
+ENV MYSQL_PASSWORD=$MYSQL_PASSWORD
+ENV MYSQL_DBNAME=$MYSQL_DBNAME
+
+WORKDIR /app
+COPY ./ ./
+
+RUN go build -o main /app/cmd/wire_gen.go /app/cmd/main.go
+
+# Run stage
+FROM alpine:3.15
+
+WORKDIR /app
+RUN apk update && apk add bash && apk --no-cache add tzdata
+COPY --from=builder /app/main ./
+COPY ./app.env /app/
+
+COPY database/migrations ./database/migrations
+
+ENTRYPOINT ["/app/main" ]
+
+EXPOSE 3030
