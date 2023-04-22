@@ -12,7 +12,7 @@ import (
 type TodoHandler interface {
 	getTodos(w http.ResponseWriter, r *http.Request)
 	getTodo(w http.ResponseWriter, r *http.Request)
-	// createTodo(w http.ResponseWriter, r *http.Request)
+	createTodo(w http.ResponseWriter, r *http.Request)
 	// updateTodo(w http.ResponseWriter, r *http.Request)
 	MapRoutes()
 }
@@ -45,4 +45,17 @@ func (h *todoHandlerImpl) getTodo(w http.ResponseWriter, r *http.Request) {
 	utils.PanicIfError(err)
 
 	utils.GenerateJsonResponse(w, todoResp, 200, "Success")
+}
+
+func (h *todoHandlerImpl) createTodo(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var request dtos.CreateTodoRequest
+
+	utils.ValidateBodyPayload(r.Body, &request)
+
+	todoResp, err := h.todoSvc.Store(ctx, request)
+	utils.PanicIfError(err)
+
+	utils.GenerateJsonResponse(w, todoResp, 201, "Success")
 }

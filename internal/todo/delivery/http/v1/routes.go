@@ -7,5 +7,6 @@ func (h *todoHandlerImpl) MapRoutes() {
 	h.route.Route("/todo-items", func(r chi.Router) {
 		r.Get("/", h.getTodos)
 		r.Get("/{id}", h.getTodo)
+		r.Post("/", h.createTodo)
 	})
 }
