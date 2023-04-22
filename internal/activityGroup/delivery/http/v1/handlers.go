@@ -2,7 +2,6 @@ package v1
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/kholiqcode/go-todolist/internal/activityGroup/dtos"
@@ -65,17 +64,11 @@ func (h *activityGroupHandlerImpl) updateActivityGroup(w http.ResponseWriter, r 
 
 	var request dtos.UpdateActivityGroupRequest
 
-	id := chi.URLParam(r, "id")
-
-	idInt, err := strconv.Atoi(id)
-
-	if err != nil {
-		utils.PanicAppError("Invalid ID", 400)
-	}
+	id := utils.ValidateUrlParamInt(r, "id")
 
 	utils.ValidateBodyPayload(r.Body, &request)
 
-	activityGroupResp, err := h.activityGroupSvc.Update(ctx, int32(idInt), request)
+	activityGroupResp, err := h.activityGroupSvc.Update(ctx, int32(id), request)
 	utils.PanicIfError(err)
 
 	utils.GenerateJsonResponse(w, activityGroupResp, 200, "Success")
