@@ -2,16 +2,16 @@ package service
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	"github.com/kholiqcode/go-todolist/internal/activityGroup/dtos"
 	querier "github.com/kholiqcode/go-todolist/internal/activityGroup/repository"
+	"github.com/kholiqcode/go-todolist/utils"
 )
 
 type ActivityGroupService interface {
 	FindAll(ctx context.Context) ([]dtos.ActivityGroupResponse, error)
 	FindByID(ctx context.Context, id int32) (*dtos.ActivityGroupResponse, error)
+	Store(ctx context.Context, request dtos.CreateActivityGroupRequest) (*dtos.ActivityGroupResponse, error)
 }
 
 type activityGroupServiceImpl struct {
@@ -28,7 +28,7 @@ func (s *activityGroupServiceImpl) FindAll(ctx context.Context) ([]dtos.Activity
 	activityGroups, err := s.repo.ListActivityGroups(ctx)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("failed to get activity groups: %v", err))
+		return nil, utils.CustomError("failed to get activity groups", 400)
 	}
 
 	activityGroupsResp := make([]dtos.ActivityGroupResponse, len(activityGroups))
@@ -45,7 +45,34 @@ func (s *activityGroupServiceImpl) FindByID(ctx context.Context, id int32) (*dto
 	activityGroup, err := s.repo.GetActivityGroup(ctx, id)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("failed to get activity group: %v", err))
+		return nil, utils.CustomError("failed to get activity group", 404)
+	}
+
+	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
+
+	return &activityGroupResp, nil
+}
+
+func (s *activityGroupServiceImpl) Store(ctx context.Context, request dtos.CreateActivityGroupRequest) (*dtos.ActivityGroupResponse, error) {
+
+	params := querier.CreateActivityGroupParams{
+		Title: request.Title,
+		Email: request.Email,
+	}
+	res, err := s.repo.CreateActivityGroup(ctx, params)
+
+	if err != nil {
+		return nil, utils.CustomError("failed to create activity group", 400)
+	}
+
+	insertedID, err := res.LastInsertId()
+	if err != nil {
+		return nil, utils.CustomError("failed to get last inserted id", 400)
+	}
+
+	activityGroup, err := s.repo.GetActivityGroup(ctx, int32(insertedID))
+	if err != nil {
+		return nil, utils.CustomError("failed to get activity group", 400)
 	}
 
 	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
