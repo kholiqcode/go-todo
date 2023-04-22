@@ -46,7 +46,7 @@ func Recovery(next http.Handler) http.Handler {
 					statusCode = 500
 				}
 
-				utils.GenerateJsonResponse(w, errorMsgs, statusCode, "")
+				utils.GenerateJsonResponse(w, nil, statusCode, errorMsgs[0]["message"].(string))
 			}
 		}()
 		next.ServeHTTP(w, r)
