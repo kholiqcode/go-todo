@@ -7,5 +7,5 @@ func (h *activityGroupHandlerImpl) MapRoutes() {
 	h.route.Get("/", h.getActivityGroups)
 	h.route.Get("/{id}", h.getActivityGroup)
 	h.route.Post("/", h.createActivityGroup)
-
+	h.route.Patch("/{id}", h.updateActivityGroup)
 }
