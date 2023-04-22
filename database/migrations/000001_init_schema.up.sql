@@ -20,5 +20,5 @@ CREATE TABLE IF NOT EXISTS todos (
   PRIMARY KEY (id)
 );
 
-ALTER TABLE todos ADD CONSTRAINT fk_activity_group_id FOREIGN KEY (activity_group_id) REFERENCES activity_groups (id);
+ALTER TABLE todos ADD CONSTRAINT fk_activity_group_id FOREIGN KEY (activity_group_id) REFERENCES activity_groups (id) ON DELETE CASCADE ON UPDATE CASCADE;
 
