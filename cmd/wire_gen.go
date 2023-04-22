@@ -13,6 +13,9 @@ import (
 	"github.com/kholiqcode/go-todolist/internal/activityGroup/repository"
 	"github.com/kholiqcode/go-todolist/internal/activityGroup/service"
 	"github.com/kholiqcode/go-todolist/internal/app"
+	v1_2 "github.com/kholiqcode/go-todolist/internal/todo/delivery/http/v1"
+	querier2 "github.com/kholiqcode/go-todolist/internal/todo/repository"
+	service2 "github.com/kholiqcode/go-todolist/internal/todo/service"
 	"github.com/kholiqcode/go-todolist/utils"
 )
 
@@ -31,7 +34,19 @@ func InitializeApp(route *chi.Mux, DB *sql.DB, config *utils.BaseConfig) (app.Ht
 	if err != nil {
 		return nil, err
 	}
-	httpServerImpl, err := app.ProvideHttpServer(route, config, activityGroupHandlerImpl)
+	todoRepoImpl, err := querier2.ProvideTodoRepo(DB)
+	if err != nil {
+		return nil, err
+	}
+	todoServiceImpl, err := service2.ProvideTodoService(todoRepoImpl)
+	if err != nil {
+		return nil, err
+	}
+	todoHandlerImpl, err := v1_2.ProvideTodoHandler(route, todoServiceImpl)
+	if err != nil {
+		return nil, err
+	}
+	httpServerImpl, err := app.ProvideHttpServer(route, config, activityGroupHandlerImpl, todoHandlerImpl)
 	if err != nil {
 		return nil, err
 	}
