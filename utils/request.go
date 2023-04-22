@@ -14,15 +14,15 @@ type ParamType interface {
 	uuid.UUID | string
 }
 
-func ValidateUrlParamUUID(r *http.Request, paramName string) uuid.UUID {
+func ValidateUrlParamInt(r *http.Request, paramName string) int {
 	param := chi.URLParam(r, paramName)
 
-	uuid, err := uuid.Parse(param)
+	id, err := strconv.Atoi(param)
 	if err != nil {
 		PanicIfError(CustomErrorWithTrace(err, fmt.Sprintf("invalid %s param", paramName), 400))
 	}
 
-	return uuid
+	return id
 }
 
 func ValidateQueryParamInt(r *http.Request, queryName string) int {
