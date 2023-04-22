@@ -30,7 +30,7 @@ func (s *activityGroupServiceImpl) FindAll(ctx context.Context) ([]dtos.Activity
 	activityGroups, err := s.repo.ListActivityGroups(ctx)
 
 	if err != nil {
-		return nil, utils.CustomError("failed to get activity groups", 400)
+		return nil, utils.CustomErrorWithTrace(err, "failed to get activity groups", 400)
 	}
 
 	activityGroupsResp := make([]dtos.ActivityGroupResponse, len(activityGroups))
@@ -47,7 +47,7 @@ func (s *activityGroupServiceImpl) FindByID(ctx context.Context, id int32) (*dto
 	activityGroup, err := s.repo.GetActivityGroup(ctx, id)
 
 	if err != nil {
-		return nil, utils.CustomError("failed to get activity group", 404)
+		return nil, utils.CustomErrorWithTrace(err, "failed to get activity group", 404)
 	}
 
 	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
@@ -64,17 +64,17 @@ func (s *activityGroupServiceImpl) Store(ctx context.Context, request dtos.Creat
 	res, err := s.repo.CreateActivityGroup(ctx, params)
 
 	if err != nil {
-		return nil, utils.CustomError("failed to create activity group", 400)
+		return nil, utils.CustomErrorWithTrace(err, "failed to create activity group", 400)
 	}
 
 	insertedID, err := res.LastInsertId()
 	if err != nil {
-		return nil, utils.CustomError("failed to get last inserted id", 400)
+		return nil, utils.CustomErrorWithTrace(err, "failed to get last inserted id", 400)
 	}
 
 	activityGroup, err := s.repo.GetActivityGroup(ctx, int32(insertedID))
 	if err != nil {
-		return nil, utils.CustomError("failed to get activity group", 400)
+		return nil, utils.CustomErrorWithTrace(err, "failed to get activity group", 400)
 	}
 
 	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
@@ -91,12 +91,12 @@ func (s *activityGroupServiceImpl) Update(ctx context.Context, id int32, request
 	err := s.repo.UpdateActivityGroup(ctx, params)
 
 	if err != nil {
-		return nil, utils.CustomError("failed to update activity group", 400)
+		return nil, utils.CustomErrorWithTrace(err, "failed to update activity group", 400)
 	}
 
 	activityGroup, err := s.repo.GetActivityGroup(ctx, id)
 	if err != nil {
-		return nil, utils.CustomError("failed to get activity group", 400)
+		return nil, utils.CustomErrorWithTrace(err, "failed to get activity group", 400)
 	}
 
 	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
@@ -108,7 +108,7 @@ func (s *activityGroupServiceImpl) Delete(ctx context.Context, id int32) error {
 	err := s.repo.DeleteActivityGroup(ctx, id)
 
 	if err != nil {
-		return utils.CustomError("failed to delete activity group", 400)
+		return utils.CustomErrorWithTrace(err, "failed to delete activity group", 400)
 	}
 
 	return nil
