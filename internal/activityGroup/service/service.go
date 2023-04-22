@@ -12,6 +12,7 @@ type ActivityGroupService interface {
 	FindAll(ctx context.Context) ([]dtos.ActivityGroupResponse, error)
 	FindByID(ctx context.Context, id int32) (*dtos.ActivityGroupResponse, error)
 	Store(ctx context.Context, request dtos.CreateActivityGroupRequest) (*dtos.ActivityGroupResponse, error)
+	Update(ctx context.Context, id int32, request dtos.UpdateActivityGroupRequest) (*dtos.ActivityGroupResponse, error)
 }
 
 type activityGroupServiceImpl struct {
@@ -71,6 +72,28 @@ func (s *activityGroupServiceImpl) Store(ctx context.Context, request dtos.Creat
 	}
 
 	activityGroup, err := s.repo.GetActivityGroup(ctx, int32(insertedID))
+	if err != nil {
+		return nil, utils.CustomError("failed to get activity group", 400)
+	}
+
+	activityGroupResp := dtos.ToActivityGroupResponse(activityGroup)
+
+	return &activityGroupResp, nil
+}
+
+func (s *activityGroupServiceImpl) Update(ctx context.Context, id int32, request dtos.UpdateActivityGroupRequest) (*dtos.ActivityGroupResponse, error) {
+
+	params := querier.UpdateActivityGroupParams{
+		ID:   id,
+		Title: request.Title,
+	}
+	err := s.repo.UpdateActivityGroup(ctx, params)
+
+	if err != nil {
+		return nil, utils.CustomError("failed to update activity group", 400)
+	}
+
+	activityGroup, err := s.repo.GetActivityGroup(ctx, id)
 	if err != nil {
 		return nil, utils.CustomError("failed to get activity group", 400)
 	}
