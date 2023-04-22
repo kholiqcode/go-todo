@@ -8,7 +8,7 @@ mockSqlDb:
 
 .PHONY: dockerBuild
 dockerBuild:
-	docker build -t kholiq/todo:latest . -f Dockerfile.prod
+	docker build -t kholiq/todo:latest . -f Dockerfile.prod --platform linux/amd64
 
 .PHONY: dockerRun
 dockerRun:
