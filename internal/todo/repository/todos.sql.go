@@ -11,12 +11,24 @@ import (
 )
 
 const createTodo = `-- name: CreateTodo :execresult
-INSERT INTO todos (title)
-VALUES (?)
+INSERT INTO todos (activity_group_id, title, is_active, priority)
+VALUES (?, ?, ?, ?)
 `
 
-func (q *Queries) CreateTodo(ctx context.Context, title string) (sql.Result, error) {
-	return q.db.ExecContext(ctx, createTodo, title)
+type CreateTodoParams struct {
+	ActivityGroupID int32         `json:"activity_group_id"`
+	Title           string        `json:"title"`
+	IsActive        bool          `json:"is_active"`
+	Priority        TodosPriority `json:"priority"`
+}
+
+func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (sql.Result, error) {
+	return q.db.ExecContext(ctx, createTodo,
+		arg.ActivityGroupID,
+		arg.Title,
+		arg.IsActive,
+		arg.Priority,
+	)
 }
 
 const deleteTodo = `-- name: DeleteTodo :exec
