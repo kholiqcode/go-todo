@@ -10,7 +10,7 @@ import (
 
 type TodoService interface {
 	FindAll(ctx context.Context, request dtos.GetTodosRequest) ([]dtos.TodoResponse, error)
-	// FindByID(ctx context.Context, id int32) (*dtos.TodoResponse, error)
+	FindByID(ctx context.Context, id int32) (*dtos.TodoResponse, error)
 	// Store(ctx context.Context, request dtos.CreateTodoRequest) (*dtos.TodoResponse, error)
 	// Update(ctx context.Context, id int32, request dtos.UpdateTodoRequest) (*dtos.TodoResponse, error)
 	// Delete(ctx context.Context, id int32) error
@@ -43,4 +43,16 @@ func (s *todoServiceImpl) FindAll(ctx context.Context, request dtos.GetTodosRequ
 	}
 
 	return todosResp, nil
+}
+
+func (s *todoServiceImpl) FindByID(ctx context.Context, id int32) (*dtos.TodoResponse, error) {
+	todo, err := s.repo.GetTodo(ctx, id)
+
+	if err != nil {
+		return nil, utils.CustomError("failed to get todo", 400)
+	}
+
+	todoResp := dtos.ToTodoResponse(todo)
+
+	return &todoResp, nil
 }
