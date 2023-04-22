@@ -37,13 +37,9 @@ func (h *activityGroupHandlerImpl) getActivityGroup(w http.ResponseWriter, r *ht
 
 	ctx := r.Context()
 
-	id := chi.URLParam(r, "id")
+	id := utils.ValidateUrlParamInt(r, "id")
 
-	idInt, err := strconv.Atoi(id)
-
-	utils.PanicAppError("Invalid ID", 400)
-
-	activityGroupResp, err := h.activityGroupSvc.FindByID(ctx, int32(idInt))
+	activityGroupResp, err := h.activityGroupSvc.FindByID(ctx, int32(id))
 	utils.PanicIfError(err)
 
 	utils.GenerateJsonResponse(w, activityGroupResp, 200, "Success")
