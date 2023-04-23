@@ -134,16 +134,17 @@ func (q *Queries) ListTodos(ctx context.Context, arg ListTodosParams) ([]Todo, e
 
 const updateTodo = `-- name: UpdateTodo :exec
 UPDATE todos
-SET title = ?
+SET title = ?, is_active = ?
 WHERE id = ?
 `
 
 type UpdateTodoParams struct {
-	Title string `json:"title"`
-	ID    int32  `json:"id"`
+	Title    string `json:"title"`
+	IsActive bool   `json:"is_active"`
+	ID       int32  `json:"id"`
 }
 
 func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) error {
-	_, err := q.db.ExecContext(ctx, updateTodo, arg.Title, arg.ID)
+	_, err := q.db.ExecContext(ctx, updateTodo, arg.Title, arg.IsActive, arg.ID)
 	return err
 }

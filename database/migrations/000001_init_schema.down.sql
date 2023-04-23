@@ -1,2 +1,2 @@
-DROP TABLE IF EXISTS activity_groups;
+DROP TABLE IF EXISTS activities;
 DROP TABLE IF EXISTS todos;

@@ -92,7 +92,7 @@ func (s *activityGroupServiceImpl) Update(ctx context.Context, id int32, request
 	err := s.repo.UpdateActivityGroup(ctx, params)
 
 	if err != nil {
-		return nil, utils.CustomErrorWithTrace(err, "failed to update activity group", 400)
+		return nil, utils.CustomErrorWithTrace(err, "failed to update activity group", 404)
 	}
 
 	activityGroup, err := s.repo.GetActivityGroup(ctx, id)

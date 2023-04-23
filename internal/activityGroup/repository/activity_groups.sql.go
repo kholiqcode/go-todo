@@ -11,7 +11,7 @@ import (
 )
 
 const createActivityGroup = `-- name: CreateActivityGroup :execresult
-INSERT INTO activity_groups (title, email)
+INSERT INTO activities (title, email)
 VALUES (?, ?)
 `
 
@@ -25,7 +25,7 @@ func (q *Queries) CreateActivityGroup(ctx context.Context, arg CreateActivityGro
 }
 
 const deleteActivityGroup = `-- name: DeleteActivityGroup :exec
-DELETE FROM activity_groups
+DELETE FROM activities
 WHERE id = ?
 `
 
@@ -35,13 +35,13 @@ func (q *Queries) DeleteActivityGroup(ctx context.Context, id int32) error {
 }
 
 const getActivityGroup = `-- name: GetActivityGroup :one
-SELECT id, title, email, created_at, updated_at FROM activity_groups
+SELECT id, title, email, created_at, updated_at FROM activities
 WHERE id = ? LIMIT 1
 `
 
-func (q *Queries) GetActivityGroup(ctx context.Context, id int32) (ActivityGroup, error) {
+func (q *Queries) GetActivityGroup(ctx context.Context, id int32) (Activity, error) {
 	row := q.db.QueryRowContext(ctx, getActivityGroup, id)
-	var i ActivityGroup
+	var i Activity
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
@@ -53,18 +53,18 @@ func (q *Queries) GetActivityGroup(ctx context.Context, id int32) (ActivityGroup
 }
 
 const listActivityGroups = `-- name: ListActivityGroups :many
-SELECT id, title, email, created_at, updated_at FROM activity_groups ORDER BY id DESC
+SELECT id, title, email, created_at, updated_at FROM activities ORDER BY id DESC
 `
 
-func (q *Queries) ListActivityGroups(ctx context.Context) ([]ActivityGroup, error) {
+func (q *Queries) ListActivityGroups(ctx context.Context) ([]Activity, error) {
 	rows, err := q.db.QueryContext(ctx, listActivityGroups)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []ActivityGroup{}
+	items := []Activity{}
 	for rows.Next() {
-		var i ActivityGroup
+		var i Activity
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
@@ -86,7 +86,7 @@ func (q *Queries) ListActivityGroups(ctx context.Context) ([]ActivityGroup, erro
 }
 
 const updateActivityGroup = `-- name: UpdateActivityGroup :exec
-UPDATE activity_groups
+UPDATE activities
 SET title = ?
 WHERE id = ?
 `

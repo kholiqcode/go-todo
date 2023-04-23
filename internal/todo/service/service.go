@@ -89,20 +89,34 @@ func (s *todoServiceImpl) Store(ctx context.Context, request dtos.CreateTodoRequ
 }
 
 func (s *todoServiceImpl) Update(ctx context.Context, id int32, request dtos.UpdateTodoRequest) (*dtos.TodoResponse, error) {
-	param := querier.UpdateTodoParams{
-		ID:    id,
-		Title: request.Title,
-	}
-
-	err := s.repo.UpdateTodo(ctx, param)
-
-	if err != nil {
-		return nil, utils.CustomErrorWithTrace(err, "failed to update todo", 404)
-	}
-
 	todo, err := s.repo.GetTodo(ctx, id)
 	if err != nil {
 		return nil, utils.CustomErrorWithTrace(err, fmt.Sprintf("Todo with ID %v Not Found", id), 404)
+	}
+
+	param := querier.UpdateTodoParams{
+		ID: id,
+	}
+
+	if request.Title != "" {
+		param.Title = request.Title
+	} else {
+		param.Title = todo.Title
+	}
+
+	if request.IsActive != todo.IsActive {
+		param.IsActive = request.IsActive
+	}
+
+	err = s.repo.UpdateTodo(ctx, param)
+
+	if err != nil {
+		return nil, utils.CustomErrorWithTrace(err, "failed to update todo", 400)
+	}
+
+	todo, err = s.repo.GetTodo(ctx, id)
+	if err != nil {
+		return nil, utils.CustomErrorWithTrace(err, "failed to get todo", 400)
 	}
 
 	todoResp := dtos.ToTodoResponse(todo)

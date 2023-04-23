@@ -1,19 +1,19 @@
 -- name: GetActivityGroup :one
-SELECT * FROM activity_groups
+SELECT * FROM activities
 WHERE id = ? LIMIT 1;
 
 -- name: ListActivityGroups :many
-SELECT * FROM activity_groups ORDER BY id DESC;
+SELECT * FROM activities ORDER BY id DESC;
 
 -- name: DeleteActivityGroup :exec
-DELETE FROM activity_groups
+DELETE FROM activities
 WHERE id = ?;
 
 -- name: UpdateActivityGroup :exec
-UPDATE activity_groups
+UPDATE activities
 SET title = ?
 WHERE id = ?;
 
 -- name: CreateActivityGroup :execresult
-INSERT INTO activity_groups (title, email)
+INSERT INTO activities (title, email)
 VALUES (?, ?);

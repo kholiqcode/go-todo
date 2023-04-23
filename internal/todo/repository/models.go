@@ -55,7 +55,7 @@ func (ns NullTodosPriority) Value() (driver.Value, error) {
 	return string(ns.TodosPriority), nil
 }
 
-type ActivityGroup struct {
+type Activity struct {
 	ID        int32        `json:"id"`
 	Title     string       `json:"title"`
 	Email     string       `json:"email"`

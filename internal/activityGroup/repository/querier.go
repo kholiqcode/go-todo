@@ -12,8 +12,8 @@ import (
 type Querier interface {
 	CreateActivityGroup(ctx context.Context, arg CreateActivityGroupParams) (sql.Result, error)
 	DeleteActivityGroup(ctx context.Context, id int32) error
-	GetActivityGroup(ctx context.Context, id int32) (ActivityGroup, error)
-	ListActivityGroups(ctx context.Context) ([]ActivityGroup, error)
+	GetActivityGroup(ctx context.Context, id int32) (Activity, error)
+	ListActivityGroups(ctx context.Context) ([]Activity, error)
 	UpdateActivityGroup(ctx context.Context, arg UpdateActivityGroupParams) error
 }
 

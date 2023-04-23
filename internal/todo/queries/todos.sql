@@ -26,7 +26,7 @@ WHERE id = ?;
 
 -- name: UpdateTodo :exec
 UPDATE todos
-SET title = ?
+SET title = ?, is_active = ?
 WHERE id = ?;
 
 -- name: CreateTodo :execresult

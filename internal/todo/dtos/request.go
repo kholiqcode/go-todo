@@ -7,7 +7,8 @@ type CreateTodoRequest struct {
 }
 
 type UpdateTodoRequest struct {
-	Title string `json:"title" validate:"required"`
+	Title    string `json:"title"`
+	IsActive bool   `json:"is_active"`
 }
 
 type GetTodosRequest struct {
